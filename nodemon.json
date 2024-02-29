@@ -1,0 +1,4 @@
+{
+  "signal": "SIGTERM",
+  "ext": "ts, json, env, js"
+}
