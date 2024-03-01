@@ -6,7 +6,7 @@ import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import User from "../../models/User";
 import { UserAuthGuard } from "../../guards/user.guard";
-import { CreateUserDto, SignInDto } from "./dto";
+import { CreateUserDto, SignInDto, UpdateUserDto } from "./dto";
 import Helper from "../../helpers";
 
 @Controller("/api/v1/user")
@@ -89,7 +89,7 @@ export default class UserController extends RouteController {
     }
   }
 
-  @Put("/:id")
+  @Get("/:id")
   @UseGuard(UserAuthGuard)
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -122,6 +122,34 @@ export default class UserController extends RouteController {
         res,
         users.map((user) => user.toObject())
       );
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  @Put("/:userId")
+  @UseGuard(UserAuthGuard)
+  async updateUserProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { error, value } = UpdateUserDto.validate(req.body);
+
+      if (!error) {
+        return next(
+          Validator.RequestValidatorError(
+            error.details.map((error) => error.message)
+          )
+        );
+      }
+
+      const user = await User.findByIdAndUpdate(req.params.userId, value, {
+        new: true,
+      });
+
+      if (!user) {
+        return next(new Exception("User not found", 404));
+      }
+
+      return super.sendSuccessResponse(res, user.toObject());
     } catch (error) {
       return next(error);
     }
