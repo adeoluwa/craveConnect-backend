@@ -8,7 +8,7 @@ import Admin from "../../models/Admin";
 import { AdminAuthGuard } from "../../guards/index.guard";
 import { CreateAdminDto, EditAdminDto, LoginDto } from "./dto";
 import HttpStatusCode from "../../helpers/HttpsResponse";
-import Helper from "server/helpers";
+import Helper from "../../helpers";
 
 @Controller("/api/v1/admin")
 export default class AdminController extends RouteController {
