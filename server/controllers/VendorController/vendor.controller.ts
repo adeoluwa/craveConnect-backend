@@ -8,7 +8,7 @@ import Vendor from "../../models/Vendor";
 import { VendorAuthGuard } from "../../guards/vendor.guard";
 import { CreateVendorDto, UpdateVendorDto, VendorSignInDto } from "./dto";
 import Helper from "../../helpers";
-import { AdminAuthGuard } from "server/guards/admin.guard";
+import { AdminAuthGuard } from "../../guards/admin.guard";
 
 @Controller("/api/v1/vendor")
 export default class VendorController extends RouteController {

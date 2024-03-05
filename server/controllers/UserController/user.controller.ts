@@ -8,7 +8,7 @@ import User from "../../models/User";
 import { UserAuthGuard } from "../../guards/user.guard";
 import { CreateUserDto, SignInDto, UpdateUserDto } from "./dto";
 import Helper from "../../helpers";
-import { AdminAuthGuard } from "server/guards/admin.guard";
+import { AdminAuthGuard } from "../../guards/admin.guard";
 
 @Controller("/api/v1/user")
 // @UseGuard(UserAuthGuard)
