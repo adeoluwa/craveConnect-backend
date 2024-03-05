@@ -168,7 +168,7 @@ export default class VendorController extends RouteController {
 
       return super.sendSuccessResponse(res, null, null, 204);
     } catch (error) {
-      return next;
+      return next(error);
     }
   }
 }
