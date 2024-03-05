@@ -8,6 +8,7 @@ import User from "../../models/User";
 import { UserAuthGuard } from "../../guards/user.guard";
 import { CreateUserDto, SignInDto, UpdateUserDto } from "./dto";
 import Helper from "../../helpers";
+import { AdminAuthGuard } from "server/guards/admin.guard";
 
 @Controller("/api/v1/user")
 // @UseGuard(UserAuthGuard)
@@ -106,6 +107,7 @@ export default class UserController extends RouteController {
   }
 
   @Get("/list-users")
+  @UseGuard(AdminAuthGuard)
   async listUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await User.find();
@@ -156,6 +158,7 @@ export default class UserController extends RouteController {
   }
 
   @Delete("/:userId")
+  @UseGuard(AdminAuthGuard)
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedUser = await User.findByIdAndDelete(req.params.userId);
