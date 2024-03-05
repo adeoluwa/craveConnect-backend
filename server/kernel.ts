@@ -17,6 +17,7 @@ import {
 import UserController from "./controllers/UserController/user.controller";
 import FoodController from "./controllers/FoodController/food.controller";
 import VendorController from "./controllers/VendorController/vendor.controller";
+import AdminController from "./controllers/AdminController/admin.controller";
 
 process.env.Tz = "Africa/Lagos";
 
@@ -28,7 +29,12 @@ class Kernel {
     this.middlewares();
     this.webhooks();
 
-    this.mapControllersToRoutes([UserController]);
+    this.mapControllersToRoutes([
+      UserController,
+      FoodController,
+      VendorController,
+      AdminController,
+    ]);
     this.routes();
     this.errorHandler();
     this.databaseConnection();
