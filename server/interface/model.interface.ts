@@ -92,4 +92,4 @@ export interface AdminAttributes extends Document {
   blocked_Vendor: HydratedDocument<VendorAttributes>["_id"][];
   createdAt: string;
   updatedAt: string;
-}
+};

@@ -8,6 +8,7 @@ import Vendor from "../../models/Vendor";
 import { VendorAuthGuard } from "../../guards/vendor.guard";
 import { CreateVendorDto, UpdateVendorDto, VendorSignInDto } from "./dto";
 import Helper from "../../helpers";
+import { AdminAuthGuard } from "server/guards/admin.guard";
 
 @Controller("/api/v1/vendor")
 export default class VendorController extends RouteController {
@@ -156,6 +157,7 @@ export default class VendorController extends RouteController {
   }
 
   @Delete("/:vendorId")
+  @UseGuard(AdminAuthGuard)
   async deleteVendorProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedVendor = await Vendor.findByIdAndDelete(req.params.vendorId);
