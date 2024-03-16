@@ -5,6 +5,8 @@ import { Request, Response, NextFunction } from "express";
 import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import Admin from "../../models/Admin";
+import User from "../../models/User";
+import Vendor from "../../models/Vendor";
 import { AdminAuthGuard } from "../../guards/index.guard";
 import { CreateAdminDto, EditAdminDto, LoginDto } from "./dto";
 import HttpStatusCode from "../../helpers/HttpsResponse";
@@ -55,7 +57,7 @@ export default class AdminController extends RouteController {
       }
 
       const admin = await Admin.findOne({ email: req.body.email }).select(
-        "createdAt -updatedAt"
+        "-createdAt -updatedAt"
       );
 
       if (!admin) {
@@ -204,4 +206,6 @@ export default class AdminController extends RouteController {
       return next(error);
     }
   }
+
+  
 }

@@ -11,7 +11,6 @@ import Helper from "../../helpers";
 import { AdminAuthGuard } from "../../guards/admin.guard";
 
 @Controller("/api/v1/user")
-// @UseGuard(UserAuthGuard)
 export default class UserController extends RouteController {
   constructor() {
     super();
@@ -107,7 +106,6 @@ export default class UserController extends RouteController {
   }
 
   @Get("/list-users")
-  @UseGuard(AdminAuthGuard)
   async listUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await User.find();
