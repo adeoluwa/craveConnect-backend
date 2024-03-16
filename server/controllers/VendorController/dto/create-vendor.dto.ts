@@ -7,5 +7,6 @@ export const CreateVendorDto = Joi.object<VendorAttributes>({
   email: Joi.string().required(),
   phone: Joi.string().required(),
   stateOfResidence: Joi.string().required(),
+  location:Joi.string().required(),
   password: Joi.string().required(),
 });
