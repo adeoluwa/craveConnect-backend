@@ -135,6 +135,7 @@ export default class VendorController extends RouteController {
   }
 
   @Get("/list-vendor")
+  @UseGuard(AdminAuthGuard)
   async listVendors(req: Request, res: Response, next: NextFunction) {
     try {
       const vendors = await Vendor.find();
