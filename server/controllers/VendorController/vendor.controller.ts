@@ -6,91 +6,17 @@ import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import Vendor from "../../models/Vendor";
 import { VendorAuthGuard } from "../../guards/vendor.guard";
-import { CreateVendorDto, UpdateVendorDto, VendorSignInDto } from "./dto";
-import Helper from "../../helpers";
+import { UpdateVendorDto} from "./dto";
 import { AdminAuthGuard } from "../../guards/admin.guard";
 
 @Controller("/api/v1/vendor")
+@UseGuard(VendorAuthGuard)
 export default class VendorController extends RouteController {
   constructor() {
     super();
   }
 
-  @Post("/")
-  async createVendor(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { error, value } = CreateVendorDto.validate(req.body);
-
-      if (error) {
-        return next(
-          Validator.RequestValidatorError(
-            error.details.map((error) => error.message)
-          )
-        );
-      }
-
-      const vendor = await Vendor.create(value);
-      return super.sendSuccessResponse(res, vendor.toObject(), null, 201);
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  @Post("/login")
-  async vendorLogin(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { error, value } = VendorSignInDto.validate(req.body);
-
-      if (error) {
-        return next(
-          Validator.RequestValidatorError(
-            error.details.map((error) => error.message)
-          )
-        );
-      }
-
-      const vendor = await Vendor.findOne({ email: req.body.email }).select(
-        "-createdAt -updatedAt"
-      );
-
-      if (!vendor) {
-        return next(new Exception("Vendor not found", 404));
-      }
-
-      const isPasswordValid = await Helper.correctPassword(
-        value.password,
-        vendor.password
-      );
-
-      if (!isPasswordValid) {
-        return next(
-          new Exception("Invalid Credentials, pls check and try again")
-        );
-      }
-
-      const { token } = Helper.signToken({
-        email: vendor.email,
-        _id: vendor._id,
-      });
-
-      console.log(vendor.toObject());
-
-      return super.sendSuccessResponse(res, {
-        accessToken: token,
-        user: Helper.omitProperties(
-          vendor.toObject(),
-          "password",
-          "createdAt",
-          "updatedAt"
-        ),
-      });
-    } catch (error) {
-      return next(error);
-    }
-  }
-
   @Put("/:vendorId")
-  @UseGuard(VendorAuthGuard)
   async updateVendor(req: Request, res: Response, next: NextFunction) {
     try {
       const { error, value } = UpdateVendorDto.validate(req.body);
@@ -135,7 +61,6 @@ export default class VendorController extends RouteController {
   }
 
   @Get("/list-vendor")
-  @UseGuard(AdminAuthGuard)
   async listVendors(req: Request, res: Response, next: NextFunction) {
     try {
       const vendors = await Vendor.find();
@@ -158,7 +83,6 @@ export default class VendorController extends RouteController {
   }
 
   @Delete("/:vendorId")
-  @UseGuard(AdminAuthGuard)
   async deleteVendorProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedVendor = await Vendor.findByIdAndDelete(req.params.vendorId);
