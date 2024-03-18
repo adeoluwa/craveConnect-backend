@@ -6,17 +6,45 @@ import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import Vendor from "../../models/Vendor";
 import { VendorAuthGuard } from "../../guards/vendor.guard";
-import { UpdateVendorDto} from "./dto";
+import { UpdateVendorDto } from "./dto";
 import { AdminAuthGuard } from "../../guards/admin.guard";
+import HttpStatusCode from "../../helpers/HttpsResponse";
 
 @Controller("/api/v1/vendor")
-@UseGuard(VendorAuthGuard)
 export default class VendorController extends RouteController {
   constructor() {
     super();
   }
 
+  @Get("/vendors")
+  async listVendor(req: Request, res: Response, next: NextFunction) {
+    try {
+      const vendors = await Vendor.find({});
+
+      if (vendors.length === 0) {
+        return super.sendSuccessResponse(
+          res,
+          { vendors: vendors.length },
+          "Vendor list is empty",
+          HttpStatusCode.HTTP_OK
+        );
+      }
+
+      console.log(vendors);
+
+      return super.sendSuccessResponse(
+        res,
+        vendors.map((vendor) => vendor.toObject()),
+        "Vendors details retrieved",
+        HttpStatusCode.HTTP_OK
+      );
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   @Put("/:vendorId")
+  @UseGuard(VendorAuthGuard)
   async updateVendor(req: Request, res: Response, next: NextFunction) {
     try {
       const { error, value } = UpdateVendorDto.validate(req.body);
@@ -60,29 +88,8 @@ export default class VendorController extends RouteController {
     }
   }
 
-  @Get("/list-vendor")
-  async listVendors(req: Request, res: Response, next: NextFunction) {
-    try {
-      const vendors = await Vendor.find();
-
-      if (vendors.length === 0) {
-        return super.sendSuccessResponse(
-          res,
-          null,
-          "Vendors list is currently empty, Onboard some will you?"
-        );
-      }
-
-      return super.sendSuccessResponse(
-        res,
-        vendors.map((vendor) => vendor.toObject())
-      );
-    } catch (error) {
-      return next(error);
-    }
-  }
-
   @Delete("/:vendorId")
+  @UseGuard(VendorAuthGuard)
   async deleteVendorProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedVendor = await Vendor.findByIdAndDelete(req.params.vendorId);

@@ -8,12 +8,31 @@ import User from "../../models/User";
 import { UserAuthGuard } from "../../guards/user.guard";
 import { UpdateUserDto } from "./dto";
 
-
 @Controller("/api/v1/user")
-@UseGuard(UserAuthGuard)
+// @UseGuard(UserAuthGuard)
 export default class UserController extends RouteController {
   constructor() {
     super();
+  }
+
+  @Get("/users")
+  async listUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const users = await User.find();
+
+      if (users.length === 0) {
+        return super.sendSuccessResponse(res, null, "users list is empty");
+      }
+
+      return super.sendSuccessResponse(
+        res,
+        users.map((user) => user.toObject()),
+        "users details retrived",
+        200
+      );
+    } catch (error) {
+      return next(error);
+    }
   }
 
   @Get("/:id")

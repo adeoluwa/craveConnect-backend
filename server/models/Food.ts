@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { FoodAttributes } from "../interface/model.interface";
+import Vendor from "./Vendor";
+import User from "./User";
 
 export const FoodSchema = new mongoose.Schema<FoodAttributes>(
   {
@@ -27,20 +29,20 @@ export const FoodSchema = new mongoose.Schema<FoodAttributes>(
     },
     vendorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor",
+      ref: Vendor,
     },
     boughtBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: User,
       },
     ],
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: Review,
+    //   },
+    // ],
     ratings: {
       type: Number,
     },
