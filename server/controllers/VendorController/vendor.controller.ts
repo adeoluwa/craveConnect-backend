@@ -103,4 +103,15 @@ export default class VendorController extends RouteController {
       return next(error);
     }
   }
+
+  // creating Food
+
+  @Post("/creat-food")
+  async createFood(req:Request, res:Response, next:NextFunction){
+    try {
+      
+    } catch (error) {
+      return next(error)
+    }
+  }
 }
