@@ -8,7 +8,7 @@ import { CreateFoodDto, UpdateFoodDto } from "./dto";
 import Food from "../../models/Food";
 
 @Controller("/api/v1/food")
-@UseGuard(VendorAuthGuard, AdminAuthGuard)
+// @UseGuard(VendorAuthGuard, AdminAuthGuard)
 export default class FoodController extends RouteController {
   constructor() {
     super();
@@ -43,7 +43,7 @@ export default class FoodController extends RouteController {
   @Get("/")
   async listFoods(req: Request, res: Response, next: NextFunction) {
     try {
-      const foods = await Food.find();
+      const foods = await Food.find({});
 
       if (foods.length === 0) {
         return super.sendSuccessResponse(

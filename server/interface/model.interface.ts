@@ -38,7 +38,7 @@ export interface UserReviewsAttributes extends Document {
   user_id: HydratedDocument<UserAttributes>["_id"];
   food_id: HydratedDocument<FoodAttributes>["_id"];
   review: string;
-  star: number;
+  rating: number;
 }
 
 export interface VendorAttributes extends Document {

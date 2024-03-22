@@ -6,9 +6,9 @@ import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import Vendor from "../../models/Vendor";
 import { VendorAuthGuard } from "../../guards/vendor.guard";
-import { CreateVendorDto, UpdateVendorDto, VendorSignInDto } from "./dto";
-import Helper from "../../helpers";
+import { UpdateVendorDto } from "./dto";
 import { AdminAuthGuard } from "../../guards/admin.guard";
+import HttpStatusCode from "../../helpers/HttpsResponse";
 
 @Controller("/api/v1/vendor")
 export default class VendorController extends RouteController {
@@ -16,74 +16,28 @@ export default class VendorController extends RouteController {
     super();
   }
 
-  @Post("/")
-  async createVendor(req: Request, res: Response, next: NextFunction) {
+  @Get("/vendors")
+  async listVendor(req: Request, res: Response, next: NextFunction) {
     try {
-      const { error, value } = CreateVendorDto.validate(req.body);
+      const vendors = await Vendor.find({});
 
-      if (error) {
-        return next(
-          Validator.RequestValidatorError(
-            error.details.map((error) => error.message)
-          )
+      if (vendors.length === 0) {
+        return super.sendSuccessResponse(
+          res,
+          { vendors: vendors.length },
+          "Vendor list is empty",
+          HttpStatusCode.HTTP_OK
         );
       }
 
-      const vendor = await Vendor.create(value);
-      return super.sendSuccessResponse(res, vendor.toObject(), null, 201);
-    } catch (error) {
-      return next(error);
-    }
-  }
+      console.log(vendors);
 
-  @Post("/login")
-  async vendorLogin(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { error, value } = VendorSignInDto.validate(req.body);
-
-      if (error) {
-        return next(
-          Validator.RequestValidatorError(
-            error.details.map((error) => error.message)
-          )
-        );
-      }
-
-      const vendor = await Vendor.findOne({ email: req.body.email }).select(
-        "-createdAt -updatedAt"
+      return super.sendSuccessResponse(
+        res,
+        vendors.map((vendor) => vendor.toObject()),
+        "Vendors details retrieved",
+        HttpStatusCode.HTTP_OK
       );
-
-      if (!vendor) {
-        return next(new Exception("Vendor not found", 404));
-      }
-
-      const isPasswordValid = await Helper.correctPassword(
-        value.password,
-        vendor.password
-      );
-
-      if (!isPasswordValid) {
-        return next(
-          new Exception("Invalid Credentials, pls check and try again")
-        );
-      }
-
-      const { token } = Helper.signToken({
-        email: vendor.email,
-        _id: vendor._id,
-      });
-
-      console.log(vendor.toObject());
-
-      return super.sendSuccessResponse(res, {
-        accessToken: token,
-        user: Helper.omitProperties(
-          vendor.toObject(),
-          "password",
-          "createdAt",
-          "updatedAt"
-        ),
-      });
     } catch (error) {
       return next(error);
     }
@@ -134,31 +88,8 @@ export default class VendorController extends RouteController {
     }
   }
 
-  @Get("/list-vendor")
-  @UseGuard(AdminAuthGuard)
-  async listVendors(req: Request, res: Response, next: NextFunction) {
-    try {
-      const vendors = await Vendor.find();
-
-      if (vendors.length === 0) {
-        return super.sendSuccessResponse(
-          res,
-          null,
-          "Vendors list is currently empty, Onboard some will you?"
-        );
-      }
-
-      return super.sendSuccessResponse(
-        res,
-        vendors.map((vendor) => vendor.toObject())
-      );
-    } catch (error) {
-      return next(error);
-    }
-  }
-
   @Delete("/:vendorId")
-  @UseGuard(AdminAuthGuard)
+  @UseGuard(VendorAuthGuard)
   async deleteVendorProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedVendor = await Vendor.findByIdAndDelete(req.params.vendorId);
@@ -170,6 +101,17 @@ export default class VendorController extends RouteController {
       return super.sendSuccessResponse(res, null, null, 204);
     } catch (error) {
       return next(error);
+    }
+  }
+
+  // creating Food
+
+  @Post("/creat-food")
+  async createFood(req:Request, res:Response, next:NextFunction){
+    try {
+      
+    } catch (error) {
+      return next(error)
     }
   }
 }

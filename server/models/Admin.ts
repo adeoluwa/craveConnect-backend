@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import { AdminAttributes } from "../interface/model.interface";
 import bcrypt from "bcryptjs";
+import User from "./User";
+import Vendor from "./Vendor";
 
 export const AdminSchema = new mongoose.Schema<AdminAttributes>(
   {
@@ -31,25 +33,25 @@ export const AdminSchema = new mongoose.Schema<AdminAttributes>(
     suspended_User: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: User,
       },
     ],
     blocked_User: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: User,
       },
     ],
     suspended_Vendor: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Vendor",
+        ref: Vendor,
       },
     ],
     blocked_Vendor: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Vendor",
+        ref: Vendor,
       },
     ],
   },
