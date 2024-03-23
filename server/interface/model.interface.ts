@@ -93,3 +93,16 @@ export interface AdminAttributes extends Document {
   createdAt: string;
   updatedAt: string;
 };
+
+export interface OrderAttributes extends Document {
+  _id:Schema.Types.ObjectId;
+  userId: HydratedDocument<UserAttributes>["_id"];
+  foodItems:{
+    foodId: HydratedDocument<FoodAttributes>["_id"];
+    quantity: number
+  }[];
+  totalPrice: number;
+  status:string;
+  createdAt: string;
+  updated:string;
+}
