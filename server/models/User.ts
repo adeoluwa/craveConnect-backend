@@ -30,7 +30,7 @@ export const UserSchema = new mongoose.Schema<UserAttributes>(
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Food",
+        ref: "Order",
       },
     ],
     reviews: [

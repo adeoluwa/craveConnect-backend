@@ -92,7 +92,11 @@ export default class AuthController extends RouteController {
             user.toObject(),
             "password",
             "createdAt",
-            "updatedAt"
+            "updatedAt",
+            "orders",
+            "reviews",
+            "address",
+            "stateOfResidence"
           ),
         },
         "User logged In successfully",
@@ -271,3 +275,5 @@ export default class AuthController extends RouteController {
     }
   }
 }
+
+// 

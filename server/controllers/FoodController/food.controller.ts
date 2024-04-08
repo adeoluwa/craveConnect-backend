@@ -8,13 +8,13 @@ import { CreateFoodDto, UpdateFoodDto } from "./dto";
 import Food from "../../models/Food";
 
 @Controller("/api/v1/food")
-// @UseGuard(VendorAuthGuard, AdminAuthGuard)
 export default class FoodController extends RouteController {
   constructor() {
     super();
   }
-
+  
   @Post("/upload-food")
+  @UseGuard(VendorAuthGuard)
   async uploadFood(req: Request, res: Response, next: NextFunction) {
     try {
       const { error, value } = CreateFoodDto.validate(req.body);

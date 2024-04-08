@@ -5,8 +5,12 @@ import { Request, Response, NextFunction } from "express";
 import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import User from "../../models/User";
+import Food from "../../models/Food";
+import Order from "../../models/Order";
 import { UserAuthGuard } from "../../guards/user.guard";
 import { UpdateUserDto } from "./dto";
+import HttpStatusCode from "../../helpers/HttpsResponse";
+import mongoose, { Types } from "mongoose";
 
 @Controller("/api/v1/user")
 // @UseGuard(UserAuthGuard)
@@ -55,7 +59,7 @@ export default class UserController extends RouteController {
     try {
       const { error, value } = UpdateUserDto.validate(req.body);
 
-      if (!error) {
+      if (error) {
         return next(
           Validator.RequestValidatorError(
             error.details.map((error) => error.message)
@@ -91,4 +95,7 @@ export default class UserController extends RouteController {
       return next(error);
     }
   }
+
+  //TODO: Implement add food to user cart/order, user's food review, and report
+
 }
