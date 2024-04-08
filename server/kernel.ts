@@ -19,6 +19,7 @@ import FoodController from "./controllers/FoodController/food.controller";
 import VendorController from "./controllers/VendorController/vendor.controller";
 import AdminController from "./controllers/AdminController/admin.controller";
 import AuthController from "./controllers/Auth/auth.controller";
+import OrderController from "./controllers/OrderController/order.controller"
 
 process.env.Tz = "Africa/Lagos";
 
@@ -36,6 +37,7 @@ class Kernel {
       VendorController,
       AdminController,
       AuthController,
+      OrderController,
     ]);
     this.routes();
     this.errorHandler();

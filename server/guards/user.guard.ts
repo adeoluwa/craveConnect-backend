@@ -35,6 +35,8 @@ export class UserAuthGuard {
       }
 
       req.user = user as UserAttributes;
+
+      console.log("User ID in UserAuthGuard: ", req.user._id)
       return next();
     } catch (error) {
       return next(error)

@@ -5,12 +5,12 @@ import Food from "./Food";
 
 export const OrderSchema = new mongoose.Schema<OrderAttributes>(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: User, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     foodItems: [
       {
         foodId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: Food,
+          ref: "Food",
         },
         quantity: {
           type: Number,
