@@ -40,6 +40,7 @@ export default class UserController extends RouteController {
   }
 
   @Get("/:id")
+  // @UseGuard(UserAuthGuard)
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await User.findById(req.params.userId);
@@ -55,6 +56,7 @@ export default class UserController extends RouteController {
   }
 
   @Put("/:userId")
+  @UseGuard(UserAuthGuard)
   async updateUserProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const { error, value } = UpdateUserDto.validate(req.body);
@@ -82,6 +84,7 @@ export default class UserController extends RouteController {
   }
 
   @Delete("/:userId")
+  @UseGuard(UserAuthGuard)
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const deletedUser = await User.findByIdAndDelete(req.params.userId);

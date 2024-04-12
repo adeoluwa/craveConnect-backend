@@ -12,6 +12,7 @@ import { AdminAuthGuard } from "../../guards/admin.guard";
 import HttpStatusCode from "../../helpers/HttpsResponse";
 import Food from "../../models/Food";
 import User from "../../models/User";
+import mongoose from "mongoose";
 
 interface FoodItemResponse {
   foodId: {
@@ -199,7 +200,6 @@ export default class VendorController extends RouteController {
     }
   }
 
-
   @Get("/list-customers/:vendorId")
   @UseGuard(VendorAuthGuard)
   async listCustomers(req: Request, res: Response, next: NextFunction) {
@@ -208,7 +208,7 @@ export default class VendorController extends RouteController {
       console.log("Vendor ID", vendorId);
 
       const vendor = await Vendor.findById(vendorId);
-      console.log(vendor)
+      console.log(vendor);
 
       if (!vendor) {
         return next(new Exception("No such Vendor", 404));
@@ -252,9 +252,9 @@ export default class VendorController extends RouteController {
     try {
       const vendorId = req.params.vendorId;
 
-      const vendor = await Vendor.findById(vendorId)
-      if(!vendor){
-        return next(new Exception("Vendor does not exisit",404))
+      const vendor = await Vendor.findById(vendorId);
+      if (!vendor) {
+        return next(new Exception("Vendor does not exisit", 404));
       }
 
       // console.log("vendorID: ", vendor._id)
@@ -280,15 +280,23 @@ export default class VendorController extends RouteController {
       // foods.forEach((food) => {
       //   uniqueCustomer.add(food.boughtBy.toString());
       // });
-      const uniqueCustomer = new Set(foods.map(food => food.boughtBy))
+      // const uniqueCustomer = new Set(foods.map(food => food.boughtBy))
+      const uniqueCustomer = new Set();
+      foods.forEach((food) => {
+        uniqueCustomer.add(food.boughtBy.toString());
+      });
 
       totalCustomers = uniqueCustomer.size;
+
+      const totalReviews = await Review.countDocuments({
+        foodId: { $in: foods.map((food) => food._id) },
+      });
 
       const formattedResponse = {
         "Vendor's ID": vendorId,
         "Total Food": totalFood,
         Customers: totalCustomers,
-        Reviews: "",
+        Reviews: totalReviews,
       };
 
       return super.sendSuccessResponse(
@@ -296,6 +304,47 @@ export default class VendorController extends RouteController {
         formattedResponse,
         "Vendor's Stats retrieved",
         HttpStatusCode.HTTP_OK
+      );
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  @Get("/reviews/:vendorId")
+  async listReviewsForVendor(req: Request, res: Response, next: NextFunction) {
+    try {
+      const vendorId = req.params.vendorId;
+
+      const vendor = await Vendor.findById(vendorId);
+
+      if (!vendor) {
+        return next(new Exception("Vendor does not exisit", 404));
+      }
+
+      const foods = await Food.find({ vendorId: vendorId });
+      if (!foods || foods.length === 0) {
+        return next(new Exception("No Food record found for this vendor", 404));
+      }
+
+      const reviews = await Review.find({
+        foodId: { $in: foods.map((food) => food._id) },
+      });
+
+      const formattedResponse = {
+        "Vendor's ID": vendor._id,
+        Reviews: reviews.map((review) => ({
+          "Review ID": review._id,
+          "Food ID": review.foodId,
+          Comment: review.comment,
+          Rating: review.rating,
+        })),
+      };
+
+      return super.sendSuccessResponse(
+        res,
+        formattedResponse,
+        "Reviews for vendor's foods retrieved",
+        200
       );
     } catch (error) {
       return next(error);
