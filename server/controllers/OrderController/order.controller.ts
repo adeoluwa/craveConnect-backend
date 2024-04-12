@@ -31,6 +31,8 @@ export default class OrderController extends RouteController {
 
       if (exisitingOrder) {
         for (const item of foodItems) {
+
+          // const food = await Food.findById(item.foodId)
           /* This line of code is finding an existing item in the `foodItems` array of the
           `exisitingOrder` object based on a condition. */
           const exisitingItem = exisitingOrder.foodItems.find(
@@ -102,6 +104,20 @@ export default class OrderController extends RouteController {
         { $push: { orders: newOrder._id } },
         { new: true }
       );
+
+      for (const item of foodItems){
+        await Food.findByIdAndUpdate(
+          item.foodId,
+          {$push:{boughtBy: userId}},
+          {new:true}
+        )
+      }
+
+      // await Food.findByIdAndUpdate(
+      //   foodObjectId,
+      //   { $push: { boughtBy: userId } },
+      //   { new: true }
+      // );
 
       return super.sendSuccessResponse(
         res,
@@ -227,7 +243,8 @@ export default class OrderController extends RouteController {
 
       await User.findByIdAndUpdate(
         userId,
-        { $addToSet: { orders: order._id } },
+        // { $addToSet: { orders: order._id } },
+        { $addToSet: { orders: orderId } },
         { new: true }
       );
 
@@ -235,7 +252,7 @@ export default class OrderController extends RouteController {
         res,
         order.toObject(),
         "Order updated successfully",
-        HttpStatusCode.HTTP_OK
+        HttpStatusCode.HTTP_CREATED
       );
     } catch (error) {
       return next(error);
@@ -287,6 +304,11 @@ export default class OrderController extends RouteController {
         { new: true }
       );
 
+      await Food.findByIdAndUpdate(
+        { $pull: { boughtBy: userId } },
+        { new: true }
+      );
+
       return super.sendSuccessResponse(
         res,
         { updatedOrder: order.toObject() },
@@ -316,7 +338,7 @@ export default class OrderController extends RouteController {
 
       await User.findByIdAndUpdate(
         userId,
-        { $pull: { orders: order?._id } },
+        { $pull: { orders: orderId } },
         { new: true }
       );
 
