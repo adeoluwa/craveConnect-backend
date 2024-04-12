@@ -35,14 +35,14 @@ export interface FoodAttributes extends Document {
 
 export interface UserReviewsAttributes extends Document {
   _id: Schema.Types.ObjectId;
-  user_id: HydratedDocument<UserAttributes>["_id"];
-  food_id: HydratedDocument<FoodAttributes>["_id"];
-  review: string;
+  userId: HydratedDocument<UserAttributes>["_id"];
+  foodId: HydratedDocument<FoodAttributes>["_id"];
+  comment: string;
   rating: number;
 }
 
 export interface VendorAttributes extends Document {
-  _id: Schema.Types.ObjectId;
+  _id?: Schema.Types.ObjectId;
   firstname: string;
   lastname: string;
   username: string;

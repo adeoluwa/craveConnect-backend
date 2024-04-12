@@ -177,11 +177,11 @@ export default class AuthController extends RouteController {
         _id: vendor._id,
       });
 
-      console.log(vendor.toObject());
+      // console.log(vendor.toObject());
 
       return super.sendSuccessResponse(res, {
         accessToken: token,
-        user: Helper.omitProperties(
+        vendor: Helper.omitProperties(
           vendor.toObject(),
           "password",
           "createdAt",

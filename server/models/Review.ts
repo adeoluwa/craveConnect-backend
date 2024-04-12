@@ -6,9 +6,9 @@ import Food from "./Food";
 
 export const ReviewSchema = new mongoose.Schema<UserReviewsAttributes>(
   {
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    food_id: { type: mongoose.Schema.Types.ObjectId, ref: "Food"},
-    review: { type: String },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    foodId: { type: mongoose.Schema.Types.ObjectId, ref: "Food"},
+    comment: { type: String },
     rating: { type: Number },
   },
   {
@@ -21,3 +21,4 @@ export const ReviewSchema = new mongoose.Schema<UserReviewsAttributes>(
 export default mongoose.model<UserReviewsAttributes>("Review", ReviewSchema);
 
 
+ 

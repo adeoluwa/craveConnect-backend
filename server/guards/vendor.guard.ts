@@ -24,9 +24,14 @@ export class VendorAuthGuard {
 
       const verifyToken = Helper.verifyToken(token);
 
+      if (!verifyToken || !verifyToken.token || !verifyToken.token.email) {
+        return next(new Exception("Invalid token", 401));
+      }
+
       const vendor = await Vendor.findOne({
         email: verifyToken.token.email,
       });
+      console.log("Vendor object: ", vendor);
 
       if (!vendor) {
         return next(
@@ -35,6 +40,8 @@ export class VendorAuthGuard {
       }
 
       req.vendor = vendor as VendorAttributes;
+
+      console.log(req.vendor._id);
       return next();
     } catch (error) {
       return next(error);
