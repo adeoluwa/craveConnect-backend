@@ -5,6 +5,12 @@ import { Request, Response, NextFunction } from "express";
 import Validator from "../../helpers/Validator";
 import Exception from "../../utils/ExceptionHandler";
 import Admin from "../../models/Admin";
+// import Food from "../../models/Food";
+import Order from "../../models/Order";
+import { AdminAuthGuard } from "../../guards/admin.guard";
+import User from "../../models/User";
+import Review from "../../models/Review";
+import Vendor from "../../models/Vendor";
 import { EditAdminDto } from "./dto";
 import HttpStatusCode from "../../helpers/HttpsResponse";
 // import User from "../../models/User";
@@ -12,24 +18,26 @@ import HttpStatusCode from "../../helpers/HttpsResponse";
 import Food from "../../models/Food";
 
 @Controller("/api/v1/admin")
+// @UseGuard(AdminAuthGuard)
 export default class AdminController extends RouteController {
   constructor() {
     super();
   }
 
-  @Put("/:id")
+  @Put("/update-profile/:adminId")
   async updateAdmin(req: Request, res: Response, next: NextFunction) {
     try {
-      const adminId = req.params.id;
+      // const adminId = req.params.id;
+      const adminId = req.params.adminId;
 
-      if (!adminId) {
+      const admin = await Admin.findById({ _id: adminId });
+
+      if (!admin) {
         return next(
-          new Exception(
-            "Id is a required params",
-            HttpStatusCode.HTTP_BAD_REQUEST
-          )
+          new Exception("Admin not found", HttpStatusCode.HTTP_NOT_FOUND)
         );
       }
+
       const { error, value } = EditAdminDto.validate(req.body);
 
       if (error) {
@@ -55,7 +63,7 @@ export default class AdminController extends RouteController {
     }
   }
 
-  @Get("/")
+  @Get("/list-admin")
   async listAdmin(req: Request, res: Response, next: NextFunction) {
     try {
       const admin = await Admin.find();
@@ -122,4 +130,31 @@ export default class AdminController extends RouteController {
     }
   }
 
+  @Get("/")
+  async adminStats(req: Request, res: Response, next: NextFunction) {
+    try {
+      const totalUser = await User.countDocuments();
+      const Vendors = await Vendor.countDocuments();
+      const Orders = await Order.countDocuments();
+      const Reviews = await Review.countDocuments();
+      const foods = await Food.countDocuments();
+
+      const formattedResponse = {
+        "Total Users": totalUser,
+        "Total Vendor": Vendors,
+        "Total User Review": Reviews,
+        "Total Order": Orders,
+        "Total Food": foods,
+      };
+
+      return super.sendSuccessResponse(
+        res,
+        formattedResponse,
+        "Admin stats feteched",
+        200
+      );
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
